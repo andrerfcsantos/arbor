@@ -31,7 +31,8 @@ func GenerateLOCChart(commits []CommitData, languageSet map[string]bool, outputF
 	for _, commit := range commits {
 		// Use short hash for x-axis
 		shortHash := commit.Hash[:8]
-		xAxis = append(xAxis, shortHash)
+		label := fmt.Sprintf("%s (%s)", shortHash, commit.Date.Format("2 Jan 2006"))
+		xAxis = append(xAxis, label)
 
 		// Add data for each language
 		for _, lang := range languages {

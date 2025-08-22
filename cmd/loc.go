@@ -77,7 +77,7 @@ func runLocCommand(cmd *cobra.Command, args []string) error {
 		}
 
 		// Count lines of code for this commit
-		locData, err := lib.CountLinesOfCode(repoPath)
+		locData, err := lib.CountLinesOfCode(repoPath, nil)
 		if err != nil {
 			fmt.Printf("   ❌ Failed to count lines of code: %v\n", err)
 			continue
@@ -94,9 +94,13 @@ func runLocCommand(cmd *cobra.Command, args []string) error {
 		// Calculate progress percentage
 		progress := float64(i+1) / float64(len(commits)) * 100
 
-		fmt.Printf("📊 Processed commit %d/%d (%.1f%%): %s '%s' by %s\n",
-			i+1, len(commits), progress, commit.Hash[:8], strings.TrimSpace(commit.Message), commit.Author)
-		fmt.Println()
+		ls := make([]string, 0, 2)
+		for l := range strings.Lines(commit.Message) {
+			ls = append(ls, l)
+		}
+
+		fmt.Printf("📊 Processed commit %d/%d (%.1f%%): %s '%s' by %s (%s)\n",
+			i+1, len(commits), progress, commit.Hash[:8], strings.TrimSpace(ls[0]), commit.Author, commit.Date.Format("2 Jan 2006"))
 	}
 
 	// Sort commits by date
